@@ -6,19 +6,27 @@ class UNet(nn.Module):
         super(UNet, self).__init__()
 
         self.conv_d1_1 = nn.Conv2d(3, 64, 3, padding=1)
+        self.bn_d1_1 = nn.BatchNorm2d(64, track_running_stats=True)
         self.conv_d1_2 = nn.Conv2d(64, 64, 3, padding=1)
+        self.bn_d1_2 = nn.BatchNorm2d(64, track_running_stats=True)
         self.pool_d1 = nn.MaxPool2d(2, 2)
 
         self.conv_d2_1 = nn.Conv2d(64, 128, 3, padding=1)
+        self.bn_d2_1 = nn.BatchNorm2d(128, track_running_stats=True)
         self.conv_d2_2 = nn.Conv2d(128, 128, 3, padding=1)
+        self.bn_d2_2 = nn.BatchNorm2d(128, track_running_stats=True)
         self.pool_d2 = nn.MaxPool2d(2, 2)
 
         self.conv_d3_1 = nn.Conv2d(128, 256, 3, padding=1)
+        self.bn_d3_1 = nn.BatchNorm2d(256, track_running_stats=True)
         self.conv_d3_2 = nn.Conv2d(256, 256, 3, padding=1)
+        self.bn_d3_2 = nn.BatchNorm2d(256, track_running_stats=True)
         self.pool_d3 = nn.MaxPool2d(2, 2)
 
         self.conv_d4_1 = nn.Conv2d(256, 512, 3, padding=1)
+        self.bn_d4_1 = nn.BatchNorm2d(512, track_running_stats=True)
         self.conv_d4_2 = nn.Conv2d(512, 512, 3, padding=1)
+        self.bn_d4_2 = nn.BatchNorm2d(512, track_running_stats=True)
         self.pool_d4 = nn.MaxPool2d(2, 2)
 
         self.conv_d5_1 = nn.Conv2d(512, 1024, 3, padding=1)
@@ -44,20 +52,20 @@ class UNet(nn.Module):
         self.act = nn.ReLU()
 
     def forward(self, x):
-        ld1 = self.act(self.conv_d1_1(x))
-        ld1 = self.act(self.conv_d1_2(ld1))
+        ld1 = self.bn_d1_1(self.act(self.conv_d1_1(x)))
+        ld1 = self.bn_d1_2(self.act(self.conv_d1_2(ld1)))
 
         ld2 = self.pool_d1(ld1)
-        ld2 = self.act(self.conv_d2_1(ld2))
-        ld2 = self.act(self.conv_d2_2(ld2))
+        ld2 = self.bn_d2_1(self.act(self.conv_d2_1(ld2)))
+        ld2 = self.bn_d2_2(self.act(self.conv_d2_2(ld2)))
 
         ld3 = self.pool_d2(ld2)
-        ld3 = self.act(self.conv_d3_1(ld3))
-        ld3 = self.act(self.conv_d3_2(ld3))
+        ld3 = self.bn_d3_1(self.act(self.conv_d3_1(ld3)))
+        ld3 = self.bn_d3_2(self.act(self.conv_d3_2(ld3)))
 
         ld4 = self.pool_d3(ld3)
-        ld4 = self.act(self.conv_d4_1(ld4))
-        ld4 = self.act(self.conv_d4_2(ld4))
+        ld4 = self.bn_d4_1(self.act(self.conv_d4_1(ld4)))
+        ld4 = self.bn_d4_2(self.act(self.conv_d4_2(ld4)))
 
         ld5 = self.pool_d4(ld4)
         ld5 = self.act(self.conv_d5_1(ld5))
