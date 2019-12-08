@@ -25,15 +25,16 @@ input_img = input_img.unsqueeze(0)
 
 out_seg = net(input_img)
 out_seg = out_seg.argmax(1)[0]
-print(out_seg)
 
 def class2rgb(idx, rgb):
+    def bit1(x, bit):
+        return int(x & (1 << bit) != 0)
     if rgb == 'r':
-        return 0x80*(idx&0x01) + 0x40*(idx&0x08)
+        return 0x80*bit1(idx, 0) + 0x40*bit1(idx, 3)
     elif rgb == 'g':
-        return 0x80*(idx&0x02) + 0x40*(idx&0x10)
+        return 0x80*bit1(idx, 1) + 0x40*bit1(idx, 4)
     elif rgb == 'b':
-        return 0x80*(idx&0x04) + 0x40*(idx&0x20)
+        return 0x80*bit1(idx, 2) + 0x40*bit1(idx, 5)
 
 class2rgb_np = np.vectorize(class2rgb)
 
