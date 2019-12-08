@@ -16,9 +16,9 @@ num_epochs = int(sys.argv[2])
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
-crop_size = (128, 128)
+crop_size = (256, 256)
 
-dataloader = voc_loader.get_dataloader(30, crop_size=crop_size, shuffle=True)
+dataloader = voc_loader.get_dataloader(10, crop_size=crop_size, shuffle=True)
 
 net = model.UNet()
 net = net.to(device)
