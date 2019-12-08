@@ -6,9 +6,9 @@ import torchvision
 
 VOC_PATH = "../../dataset/VOCdevkit/VOC2012"
 
-def get_dataloader(batch_size, crop_size=(256, 256)):
+def get_dataloader(batch_size, crop_size=(256, 256), shuffle=True):
     dataset = VOCDataset(crop_size=crop_size)
-    return torch.utils.data.DataLoader(dataset, batch_size=batch_size)
+    return torch.utils.data.DataLoader(dataset, batch_size=batch_size, shuffle=shuffle, num_workers=4)
 
 class VOCDataset(torch.utils.data.Dataset):
     def __init__(self, crop_size=(256, 256), path=VOC_PATH):
@@ -26,7 +26,7 @@ class VOCDataset(torch.utils.data.Dataset):
             def size_checker(f):
                 img = Image.open(f)
                 w, h = img.size
-                return w >= 256 & h >= 256
+                return w >= crop_size[0] & h >= crop_size[1]
 
             self.img_files = filter(size_checker, self.img_files)
             self.seg_files = filter(size_checker, self.seg_files)
@@ -45,10 +45,11 @@ class VOCDataset(torch.utils.data.Dataset):
         seg = torchvision.transforms.functional.crop(seg, t, l, h, w)
 
         toTensor = torchvision.transforms.ToTensor()
-        normalize = torchvision.transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
-        img = normalize(toTensor(img))
+        img = toTensor(img)
+        #normalize = torchvision.transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
+        #img = normalize(toTensor(img))
 
         seg = torch.tensor(np.array(seg), dtype=torch.long)
         seg[seg==255] = 0   # Make 'void' class to 'background'
 
-        return normalize(img), seg
+        return img, seg

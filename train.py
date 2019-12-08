@@ -16,17 +16,19 @@ num_epochs = int(sys.argv[2])
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
-dataloader = voc_loader.get_dataloader(10)
+crop_size = (128, 128)
+
+dataloader = voc_loader.get_dataloader(30, crop_size=crop_size, shuffle=True)
 
 net = model.UNet()
 net = net.to(device)
-torchsummary.summary(net, (3, 256, 256))
+torchsummary.summary(net, (3, crop_size[0], crop_size[1]))
 
 csaver = ckpt_saver.CkptSaver(net, tag=tag)
 
 ce_loss = nn.CrossEntropyLoss()
 ce_loss = ce_loss.to(device)
-optim = torch.optim.Adam(net.parameters(), lr=0.01)
+optim = torch.optim.Adam(net.parameters(), lr=0.001)
 
 for epoch in range(num_epochs):
     running_loss = 0.0
@@ -42,9 +44,8 @@ for epoch in range(num_epochs):
         optim.step()
 
         running_loss += loss
-        if (i+1)%100 == 0:
-            print('[%d, %5d] loss: %.3f' % (epoch+1, i+1, running_loss / 100))
-            running_loss = 0.0
+
+    print('[%d] loss: %.3f' % (epoch+1, running_loss / len(dataloader)))
     if epoch % 10 == 0:
         csaver.save(epoch)
 
