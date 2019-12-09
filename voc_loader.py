@@ -4,7 +4,7 @@ from PIL import Image
 import torch
 import torchvision
 
-VOC_PATH = "../../dataset/VOCdevkit/VOC2012"
+VOC_PATH = "./VOCdevkit/VOC2012"
 
 def get_dataloader(batch_size, crop_size=(256, 256), shuffle=True):
     dataset = VOCDataset(crop_size=crop_size)
@@ -13,8 +13,7 @@ def get_dataloader(batch_size, crop_size=(256, 256), shuffle=True):
 class VOCDataset(torch.utils.data.Dataset):
     def __init__(self, crop_size=(256, 256), path=VOC_PATH):
         self.crop_size = crop_size
-        seg_path = os.path.join(path, "ImageSets/Segmentation")
-        with open(os.path.join(seg_path, "trainval.txt")) as f:
+        with open("./ImageSets/train.txt") as f:
             lines = f.readlines()
             self.img_files = map(
                     lambda l: os.path.join(path, "JPEGImages", l.replace('\n', '.jpg')),
