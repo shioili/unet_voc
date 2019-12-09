@@ -28,9 +28,17 @@ class UpLayer(nn.Module):
 
     def forward(self, up_x, shortcut_x):
         net = self.convt(up_x)
+
+        out_shape = shortcut_x.shape    # [B, C, H, W]
+        up_shape = net.shape
+        pad_h = out_shape[2] - up_shape[2]
+        pad_w = out_shape[3] - up_shape[3]
+        net = F.pad(net, (0, pad_w, 0, pad_h))
+
         net = torch.cat((shortcut_x, net), 1)
         net = F.relu(self.bn1(self.conv1(net)))
         net = F.relu(self.bn2(self.conv2(net)))
+
         return net
 
 class UNet(nn.Module):
