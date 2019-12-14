@@ -28,7 +28,7 @@ csaver = ckpt_saver.CkptSaver(net, tag=tag)
 
 ce_loss = nn.CrossEntropyLoss()
 ce_loss = ce_loss.to(device)
-optim = torch.optim.Adam(net.parameters(), lr=0.001, weight_decay=0.0001)
+optim = torch.optim.Adam(net.parameters(), lr=0.001, weight_decay=0.0)
 
 for epoch in range(num_epochs):
     running_loss = 0.0
